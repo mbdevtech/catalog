@@ -1,8 +1,12 @@
 {
-    "name": "devnet/mvc-template",
-    "description": "DevNet Web Application (Model-View-Controller)",
-    "type": "devnet-template",
+    "name": "mbdevtech/catalog",
+    "description": "Classified Adverts Catalog",
+    "type": "project",
     "license": "MIT",
+    "authors": [{
+        "name": "Mahfoud Bousba",
+        "email": "mahfoudbousba2@gmail.com"
+    }],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {

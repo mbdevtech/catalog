@@ -1,0 +1,48 @@
+<?= $this->layout('Shared/layout') ?>
+
+<section class="login py-5 border-top-1">
+    <?php if ($this->ViewData['success']) : ?>
+        <div class="container">
+            <div class="alert alert-secondary bg-white mx-auto shadow text-center" role="alert" style="max-width: 600px">
+                <header class="d-flex flex-row">
+                    <div class="flex-grow-1">
+                        <h4 class="text-info">Registration Successful</h4>
+                    </div>
+                    <div>
+                        <a class="btn btn-close" aria-label="Close" href="/user/account/register"></a>
+                    </div>
+                </header>
+                <hr>
+                <p>
+                    Your account has been successfully created, You may now sign in with your Username and Paswword.
+                </p>
+                <a class="btn btn-info text-white" href="/user/account/login">Login</a>
+            </div>
+        <?php else : ?>
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-8 align-item-center">
+                    <div class="border border">
+                        <h3 class="bg-gray p-4">Register Now</h3>
+                        <form method="post" action="/user/account/register">
+                            <fieldset class="p-4">
+                                <input type="text" placeholder="Full Name" class="border p-3 w-100 my-2" id="InputName" name="Name" required>
+                                <input type="email" placeholder="Email*" class="border p-3 w-100 my-2" id="InputEmail" name="Email" required>
+                                <input type="password" placeholder="Password*" class="border p-3 w-100 my-2" id="InputPassword" name="Password" pattern="^(?=.*?[A-Z])(?=.*?[0-9]).{8,}$" required>
+                                <!-- <input type="password" placeholder="Confirm Password*" class="border p-3 w-100 my-2"> -->
+                                <div class="text-center">
+                                    <small class="text-muted">At least 8 characters, 1 capital letter and 1 digit</small>
+                                </div>
+                                <div class="loggedin-forgot d-inline-flex my-3" class="mt-1">
+                                    <input type="checkbox" id="registering">
+                                    <label for="registering" class="px-2">By registering, you accept our <a class="text-primary font-weight-bold" href="terms-condition.html">Terms & Conditions</a></label>
+                                </div>
+                                <button type="submit" class="d-block py-3 px-4 bg-primary text-white border-0 rounded font-weight-bold">Register Now</button>
+                            </fieldset>
+                            <?= $this->Html->AntiforgeryToken() ?>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
+</section>

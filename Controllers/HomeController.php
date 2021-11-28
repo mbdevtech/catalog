@@ -17,6 +17,11 @@ class HomeController extends AbstractController
         return $this->view();
     }
 
+    public function contact(): IActionResult
+    {
+        return $this->view();
+    }
+
     public function error(): IActionResult
     {
         $error = new \Exception("Sorry! Looks like this page doesn't exist.", 404);

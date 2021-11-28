@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Application\Controllers\CatalogController;
 use DevNet\Web\Extensions\ApplicationBuilderExtensions;
 use DevNet\Web\Extensions\ServiceCollectionExtensions;
 use DevNet\Web\Hosting\WebHost;
@@ -16,7 +17,9 @@ class Program
         $builder->configureServices(function ($services) {
             $services->addMvc();
             $services->addAntiforgery();
-            $services->addAuthentication();
+            $services->addAuthentication(function ($options) {
+                $options->LoginPath = '/user/account/login';
+            });
             $services->addAuthorisation();
         });
 
@@ -34,6 +37,7 @@ class Program
             $app->useAuthorization();
 
             $app->useEndpoint(function ($routes) {
+                $routes->mapRoute("user", "/user/{controller=Account}/{action=Index}/{id?}");
                 $routes->mapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         });
