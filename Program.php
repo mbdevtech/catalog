@@ -3,8 +3,10 @@
 namespace Application;
 
 use Application\Controllers\CatalogController;
+use Application\Models\DbManager;
 use DevNet\Web\Extensions\ApplicationBuilderExtensions;
 use DevNet\Web\Extensions\ServiceCollectionExtensions;
+use DevNet\Entity\Providers\EntityOptionsExtensions;
 use DevNet\Web\Hosting\WebHost;
 
 class Program
@@ -21,6 +23,9 @@ class Program
                 $options->LoginPath = '/user/account/login';
             });
             $services->addAuthorisation();
+            $services->addEntityContext(DbManager::class, function ($options) {
+                $options->useMysql("//root:Root@123@127.0.0.1/catalog");
+            });
         });
 
         $host = $builder->build();
