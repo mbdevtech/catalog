@@ -8,6 +8,7 @@ use DevNet\Web\Extensions\ApplicationBuilderExtensions;
 use DevNet\Web\Extensions\ServiceCollectionExtensions;
 use DevNet\Entity\Providers\EntityOptionsExtensions;
 use DevNet\Web\Hosting\WebHost;
+use DevNet\Web\Identity\User;
 
 class Program
 {
@@ -26,6 +27,7 @@ class Program
             $services->addEntityContext(DbManager::class, function ($options) {
                 $options->useMysql("//root:Root@123@127.0.0.1/catalog");
             });
+            $services->addIdentity(User::class);
         });
 
         $host = $builder->build();

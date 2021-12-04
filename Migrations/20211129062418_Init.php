@@ -13,7 +13,7 @@ class Init extends AbstractMigration
         $builder->createTable('User', function ($table) {
             $table->column('Id')->type('integer')->identity();
             $table->column('Username')->type('string', 60)->nullable(false);
-            $table->column('Pasword')->type('string', 60)->nullable(false);
+            $table->column('Password')->type('string', 60)->nullable(false);
             $table->uniqueConstraint('Username');
             $table->primaryKey('Id');
         });

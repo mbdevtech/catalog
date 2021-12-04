@@ -9,13 +9,12 @@ use DevNet\Web\Controller\AbstractController;
 use DevNet\Web\Controller\IActionResult;
 use DevNet\Web\Controller\Filters\AuthorizeFilter;
 use DevNet\Web\Controller\Filters\AntiForgeryFilter;
-use DevNet\Web\Security\ClaimsPrincipal;
-use DevNet\Web\Security\ClaimsIdentity;
-use DevNet\Web\Security\ClaimType;
-use DevNet\Web\Security\Claim;
 use Application\Models\LoginForm;
 use Application\Models\RegisterForm;
-use Application\Models\User;
+use DevNet\Web\Identity\User;
+use DevNet\Entity\EntityContext;
+use DevNet\Web\Identity\IdentityManager;
+use DevNet\Web\Identity\UserManager;
 
 /**
  * This is an example on how to create registration and login system using claims without SQL database.
@@ -24,8 +23,16 @@ use Application\Models\User;
  */
 class AccountController extends AbstractController
 {
-    public function __construct()
+    private IdentityManager $Identity;
+    private UserManager $Users;
+    private EntityContext $DbManager;
+
+    public function __construct(IdentityManager $im, UserManager $users, EntityContext $dbm)
     {
+        $this->Identity  = $im;
+        $this->Users     = $users;
+        $this->DbManager = $dbm;
+
         $this->filter('index', AuthorizeFilter::class);
         $this->filter('profile', AuthorizeFilter::class);
         $this->filter('login', AntiForgeryFilter::class);
@@ -34,19 +41,16 @@ class AccountController extends AbstractController
 
     public function index(): IActionResult
     {
-        $user = $this->HttpContext->User;
-        $claim = $user->findClaim(fn ($claim) => $claim->Type == ClaimType::Name);
-        $name = $claim ? $claim->Value : null;
-        $this->ViewData['Name'] = $name;
+        $user = $this->Users->getUser();
+        $this->ViewData['Email'] = $user->Username;
         return $this->view();
     }
 
     public function profile(): IActionResult
     {
-        $user = $this->HttpContext->User;
-        $claim = $user->findClaim(fn ($claim) => $claim->Type == ClaimType::Name);
-        $name = $claim ? $claim->Value : null;
-        $this->ViewData['Name'] = $name;
+        // show profile
+        $user = $this->Users->getUser();
+        $this->ViewData['Email'] = $user->Username;
         return $this->view();
     }
 
@@ -55,42 +59,16 @@ class AccountController extends AbstractController
         $user = $this->HttpContext->User;
 
         if ($user->isAuthenticated()) {
-            return $this->redirect('/user/account/index');
+            return $this->redirect('/user/account/');
         }
 
         if (!$form->isValide()) {
             return $this->view();
         }
 
-        if (!file_exists(__DIR__ . '/../../data.json')) {
-            return $this->view();
-        }
+        $this->Identity->signIn($form->Username, $form->Password, $form->Remember);
 
-        $json = file_get_contents(__DIR__ . '/../../data.json');
-        $data = json_decode($json);
-
-        $users = new ArrayList(Type::Object);
-        $users->addrange($data);
-
-        $user = $users->where(fn ($user) => $user->Username == $form->Username)->first();
-
-        if (!$user) {
-            return $this->view();
-        }
-
-        if ($user->Password != $form->Password) {
-            return $this->view();
-        }
-
-        $identity = new ClaimsIdentity('AuthenticationUser');
-        $identity->addClaim(new Claim(ClaimType::Name, $user->Name));
-        $identity->addClaim(new Claim(ClaimType::Email, $user->Username));
-        $identity->addClaim(new Claim(ClaimType::Role, 'Memeber'));
-        $userPrincipal  = new ClaimsPrincipal($identity);
-        $authentication = $this->HttpContext->Authentication;
-        $authentication->SignIn($userPrincipal, $form->Remember);
-
-        return $this->redirect('/user/account/index');
+        return $this->redirect('/user/account/login');
     }
 
     public function register(RegisterForm $form): IActionResult
@@ -100,23 +78,18 @@ class AccountController extends AbstractController
             return $this->view();
         }
 
-        $data = [];
-        if (file_exists(__DIR__ . '/../../data.json')) {
-            $json = file_get_contents(__DIR__ . '/../../data.json');
-            $data = json_decode($json, true);
-        }
-
         $user = new User();
         $user->Name = $form->Name;
         $user->Username = $form->Email;
         $user->Password = $form->Password;
-
-        $data[] = $user;
-        $json = json_encode($data, JSON_PRETTY_PRINT);
-        file_put_contents(__DIR__ . '/../../data.json', $json);
+        $this->Users->create($user);
 
         $this->ViewData['success'] = true;
-        return $this->view();
+
+        // find the last user
+        $last = $this->DbManager->Users->last();
+        return $this->redirect('/user/account/login');
+        //return $this->view();
     }
 
     public function logout(): IActionResult
