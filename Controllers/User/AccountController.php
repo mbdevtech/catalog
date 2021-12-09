@@ -85,11 +85,8 @@ class AccountController extends AbstractController
         $this->Users->create($user);
 
         $this->ViewData['success'] = true;
-
-        // find the last user
         $last = $this->DbManager->Users->last();
         return $this->redirect('/user/account/login');
-        //return $this->view();
     }
 
     public function logout(): IActionResult
