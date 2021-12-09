@@ -11,6 +11,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.4.0",
-        "devnet/web": "1.0.*"
+        "devnet/web": "1.0.*",
+        "fakerphp/faker": "^1.17"
     }
 }
