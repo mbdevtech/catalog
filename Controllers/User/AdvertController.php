@@ -2,10 +2,10 @@
 
 namespace Application\Controllers\User;
 
-use DevNet\Web\Controller\AbstractController;
-use DevNet\Web\Controller\IActionResult;
+use DevNet\Web\Mvc\Controller;
+use DevNet\Web\Mvc\IActionResult;
 
-class AdvertController extends AbstractController
+class AdvertController extends Controller
 {
     public function index(): IActionResult
     {

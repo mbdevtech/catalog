@@ -5,10 +5,10 @@ namespace Application\Controllers\User;
 use DevNet\System\Linq;
 use DevNet\System\Type;
 use DevNet\System\Collections\ArrayList;
-use DevNet\Web\Controller\AbstractController;
-use DevNet\Web\Controller\IActionResult;
-use DevNet\Web\Controller\Filters\AuthorizeFilter;
-use DevNet\Web\Controller\Filters\AntiForgeryFilter;
+use DevNet\Web\Mvc\Controller;
+use DevNet\Web\Mvc\IActionResult;
+use DevNet\Web\Mvc\Filters\AuthorizeFilter;
+use DevNet\Web\Mvc\Filters\AntiForgeryFilter;
 use Application\Models\LoginForm;
 use Application\Models\RegisterForm;
 use DevNet\Web\Identity\User;
@@ -21,7 +21,7 @@ use DevNet\Web\Identity\UserManager;
  * This example dosen't encrypt your data, so it's not recommanded for production,
  * Use DevNet Identity Manager instead, or encrypt you own data.
  */
-class AccountController extends AbstractController
+class AccountController extends Controller
 {
     private IdentityManager $Identity;
     private UserManager $Users;
